@@ -15,7 +15,6 @@ DO NOT MODIFY THE FUNCTION SIGNATURES.
 
 import random
 
-
 # ---------------------------------------------------------------------------
 # 1. compose
 # ---------------------------------------------------------------------------
@@ -48,6 +47,21 @@ def compose(*fns):
     """
 
     # ------ SOLUTION GOES HERE!  ------
+    if not fns:
+        raise ValueError("no functions")
+    fns = list(fns)
+    not_fns = [x for x in fns if not callable(x)]
+    # filter(callable, fns)
+    if any(not_fns):
+        raise TypeError("not all callable")
+    fns = reversed(fns)
+
+    def composed(x):
+        for f in fns:
+            x = f(x)
+        return x
+
+    return composed
 
 
 # ---------------------------------------------------------------------------
@@ -81,6 +95,12 @@ def pipeline(data, *transforms):
     """
 
     # ------ SOLUTION GOES HERE!  ------
+    istuple = lambda x: not (callable(x[0]) and isinstance(x[1], dict))
+    if any(filter(istuple, transforms)):
+        raise TypeError("tuple err")
+    for fn, d in transforms:
+        data = fn(data, **d)
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -113,6 +133,16 @@ def apply_if(data, predicate, transform, default=None):
     """
 
     # ------ SOLUTION GOES HERE!  ------
+    if not callable(predicate) or not callable(transform):
+        raise TypeError("fucked up")
+
+    def apply(d):
+        if predicate(d):
+            return transform(d)
+        else:
+            return default
+
+    return list(map(apply, data))
 
 
 # ---------------------------------------------------------------------------
@@ -154,6 +184,20 @@ def window_filter(data, size, predicate, default=None):
     """
 
     # ------ SOLUTION GOES HERE!  ------
+    if size < 1 or size > len(data):
+        raise ValueError("size error")
+    if not callable(predicate):
+        raise TypeError("error")
+    pos: int = 0
+    l: list = []
+    while len(data) - 1 >= pos + size:
+        t = data[pos : pos + size]
+        if predicate(t):
+            l.append(t)
+        else:
+            l.append(default)
+        pos += 1
+    return l
 
 
 # ---------------------------------------------------------------------------
@@ -200,7 +244,9 @@ if __name__ == "__main__":
     random.seed(42)
 
     # Simulate 20 raw temperature sensor readings (Celsius, with noise).
-    raw = [20.0 + random.gauss(0, 0.5) + random.choice([0] * 9 + [5]) for _ in range(20)]
+    raw = [
+        20.0 + random.gauss(0, 0.5) + random.choice([0] * 9 + [5]) for _ in range(20)
+    ]
 
     print("=== Raw readings ===")
     print([round(x, 3) for x in raw])
