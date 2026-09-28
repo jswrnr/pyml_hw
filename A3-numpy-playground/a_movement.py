@@ -42,7 +42,11 @@ def batch_flatten(X: np.ndarray) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    if len(X.shape) < 2:
+        raise ValueError("not enough dim")
+    el = X.shape[1:]
+    count = np.prod(el)
+    return X.reshape((X.shape[0], count))
 
 
 def split_into_patches(X: np.ndarray, patch_h: int, patch_w: int) -> np.ndarray:
@@ -72,7 +76,13 @@ def split_into_patches(X: np.ndarray, patch_h: int, patch_w: int) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    if X.shape[0] % patch_h != 0:
+        raise ValueError("h not even")
+    if X.shape[1] % patch_w != 0:
+        raise ValueError("w not even")
+    H = X.shape[0] // patch_h
+    W = X.shape[1] // patch_w
+    return X.reshape(H, patch_h, W, patch_w).transpose(0, 2, 1, 3)
 
 
 def channels_first_to_last(X: np.ndarray) -> np.ndarray:
@@ -95,7 +105,10 @@ def channels_first_to_last(X: np.ndarray) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    if X.ndim != 4:
+        raise ValueError("X must have exactly 4 dimensions")
+
+    return X.transpose(0, 2, 3, 1)
 
 
 def interleave_rows(A: np.ndarray, B: np.ndarray) -> np.ndarray:
@@ -117,7 +130,11 @@ def interleave_rows(A: np.ndarray, B: np.ndarray) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    if A.shape != B.shape or A.ndim != 2 or B.ndim != 2:
+        raise ValueError("A B no match")
+    n = A.shape[0]
+    d = A.shape[1]
+    return np.stack((A, B), axis=1).reshape(n * 2, d)
 
 
 def tile_vector(v: np.ndarray, n: int) -> np.ndarray:
@@ -139,7 +156,7 @@ def tile_vector(v: np.ndarray, n: int) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    return np.broadcast_to(v, (n, len(v)))
 
 
 if __name__ == "__main__":
