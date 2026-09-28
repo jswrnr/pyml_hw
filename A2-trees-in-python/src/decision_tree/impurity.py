@@ -34,7 +34,15 @@ def gini(y: list[int]) -> float:
     """
 
     # ------ WRITE YOUR CODE HERE ------
-    pass
+    if len(y) == 0:
+        return 0.0
+    counts = {}
+    for label in y:
+        counts[label] = counts.get(label, 0) + 1
+
+    total = len(y)
+    sum_squared_proportions = sum((count / total) ** 2 for count in counts.values())
+    return 1.0 - sum_squared_proportions
 
 
 def entropy(y: list[int]) -> float:
@@ -52,7 +60,16 @@ def entropy(y: list[int]) -> float:
     """
 
     # ------ WRITE YOUR CODE HERE ------
-    pass
+    # Entropy(S) = - sum_c p_c * log2(p_c)
+    if len(y) == 0:
+        return 0.0
+    counts = {}
+    for label in y:
+        counts[label] = counts.get(label, 0) + 1
+
+    total = len(y)
+    entropy = sum((count / total) * math.log((count / total), 2) for count in counts)
+    return -entropy
 
 
 def information_gain(
@@ -80,4 +97,19 @@ def information_gain(
     """
 
     # ------ WRITE YOUR CODE HERE ------
-    pass
+    if len(y) == 0:
+        raise ValueError("y empty")
+    if len(y_right) + len(y_left) != len(y):
+        raise ValueError("len not equal")
+
+    impurity = {}
+    impurity["y"] = criterion(y)
+    impurity["l"] = criterion(y_left)
+    impurity["r"] = criterion(y_right)
+    total = len(y)
+    ig = (
+        impurity["y"]
+        - (len(y_left) / total) * impurity["l"]
+        - (len(y_right) / total) * impurity["r"]
+    )
+    return ig

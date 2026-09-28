@@ -139,7 +139,7 @@ def find_compatible_model(
         try:
             with open(path, encoding="utf-8") as f:
                 payload = json.load(f)
-        except json.JSONDecodeError, OSError:
+        except (json.JSONDecodeError, OSError):
             continue
 
         hp = payload.get("hyperparams", {})

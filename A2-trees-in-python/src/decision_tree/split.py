@@ -62,5 +62,50 @@ def best_split(
         None -- if no split produces strictly positive gain
     """
 
-    # ------ WRITE YOUR CODE HERE ------
-    pass
+    # If no feature types are supplied, treat everything as numeric.
+    if feature_types is None:
+        feature_types = ["numeric"] * len(X[0]) if X else []
+
+    best_feature = -1
+    best_value = None
+    best_gain = float("-inf")
+
+    for j in range(len(X[0])):
+        if feature_types[j] == "numeric":
+            values = [row[j] for row in X]
+            thresholds = candidate_thresholds(values)
+
+            for t in thresholds:
+                left_y = [y[i] for i, row in enumerate(X) if row[j] <= t]
+                right_y = [y[i] for i, row in enumerate(X) if row[j] > t]
+
+                if not left_y or not right_y:
+                    continue
+
+                g = information_gain(y, left_y, right_y, criterion)
+                if g > best_gain:
+                    best_feature = j
+                    best_value = t
+                    best_gain = g
+
+        elif feature_types[j] == "categorical":
+            categories = sorted({row[j] for row in X})
+
+            for v in categories:
+                left_y = [y[i] for i, row in enumerate(X) if row[j] == v]
+                right_y = [y[i] for i, row in enumerate(X) if row[j] != v]
+
+                if not left_y or not right_y:
+                    continue
+
+                g = information_gain(y, left_y, right_y, criterion)
+                if g > best_gain:
+                    best_feature = j
+                    best_value = v
+                    best_gain = g
+
+    if best_feature == -1 or best_gain <= 0:
+        return None
+
+    assert best_value is not None
+    return (best_feature, best_value, best_gain)

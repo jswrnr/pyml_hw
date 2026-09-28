@@ -4,7 +4,6 @@ import pytest
 
 from decision_tree.impurity import entropy, gini, information_gain
 
-
 # ---------------------------------------------------------------------------
 # Smoke tests
 # ---------------------------------------------------------------------------
