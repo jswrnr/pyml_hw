@@ -69,8 +69,9 @@ def scatter_matrix(X: np.ndarray) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
-
+    mean = np.mean(X, axis=0)
+    diff = X - mean
+    return np.matmul(diff.T, diff)
 
 def batch_transpose(A: np.ndarray) -> np.ndarray:
     """
@@ -93,7 +94,7 @@ def batch_transpose(A: np.ndarray) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    np.transpose(A, axes=(0, 2, 1))
 
 
 def is_symmetric(A: np.ndarray, tol: float = 1e-9) -> bool:
@@ -112,7 +113,8 @@ def is_symmetric(A: np.ndarray, tol: float = 1e-9) -> bool:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    diffs = A - A.T
+    return np.allclose(diffs, 0, atol=tol, rtol=0)
 
 
 def column_outer_products(X: np.ndarray) -> np.ndarray:
@@ -138,7 +140,7 @@ def column_outer_products(X: np.ndarray) -> np.ndarray:
     """
 
     # --- IMPLEMENT SOLUTION HERE ---
-    pass
+    return X.T @ X
 
 
 if __name__ == "__main__":
